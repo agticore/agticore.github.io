@@ -17,8 +17,22 @@
     .nav-link:hover::after{width:100%}.nav-link:hover{color:#fff}
     header::before,header::after{content:"";position:absolute;height:2px;left:0;right:0;background:linear-gradient(to right,transparent,#fff,transparent)}
     header::before{top:0}header::after{bottom:0}
-    .hamburger{display:none}
-    @media(max-width:768px){.nav-links{display:none}.hamburger{display:block}}
+    /* Hamburger menu */
+    .hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:5px;z-index:102}
+    .hamburger span{display:block;width:25px;height:2px;background:#fff;transition:all 0.3s;transform-origin:center}
+    .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px)}
+    .hamburger.active span:nth-child(2){opacity:0}
+    .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(6px,-6px)}
+    
+    /* Mobile navigation */
+    .mobile-nav{position:fixed;top:0;right:-100%;width:80%;max-width:300px;height:100vh;background:rgba(10,10,10,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:right 0.3s ease;z-index:101;display:flex;flex-direction:column;padding:80px 30px 30px;box-shadow:-5px 0 20px rgba(0,0,0,0.5)}
+    .mobile-nav.active{right:0}
+    .mobile-nav-close{position:absolute;top:20px;right:20px;font-size:2.5rem;color:#aaa;cursor:pointer;transition:color 0.3s}
+    .mobile-nav-close:hover{color:#fff}
+    .mobile-nav-link{color:#aaa;text-decoration:none;font-size:1.1rem;letter-spacing:1px;text-transform:uppercase;padding:15px 0;border-bottom:1px solid rgba(255,255,255,0.1);transition:all 0.3s}
+    .mobile-nav-link:hover{color:#fff;padding-left:10px}
+    
+    @media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}}
 
     /* ========= HERO ========= */
     .hero{padding:100px 20px 90px;text-align:center}
@@ -525,11 +539,27 @@
   <header>
     <div class="brand-name">AGTI</div>
     <nav class="nav-links">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="#why-agti" class="nav-link">Why AGTI</a>
+      <a href="#use-cases" class="nav-link">Use Cases</a>
+    </nav>
+    <div class="hamburger" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-close" onclick="toggleMobileMenu()">×</div>
+      <a href="#home" class="mobile-nav-link" onclick="toggleMobileMenu()">Home</a>
+      <a href="#contact" class="mobile-nav-link" onclick="toggleMobileMenu()">Contact</a>
+      <a href="#why-agti" class="mobile-nav-link" onclick="toggleMobileMenu()">Why AGTI</a>
+      <a href="#use-cases" class="mobile-nav-link" onclick="toggleMobileMenu()">Use Cases</a>
     </nav>
   </header>
 
   <!-- ===== HERO ===== -->
-  <section class="hero">
+  <section class="hero" id="home">
     <div class="hero-logo-container">
       <!-- AGTI Logo - Standalone -->
       <div class="hero-logo" aria-label="AGTI Logo">
@@ -704,7 +734,7 @@
   </section>
 
   <!-- ===== CONTACT US ===== -->
-  <section class="signup contact-section">
+  <section class="signup contact-section" id="contact">
     <h2>Contact Us</h2>
     <p>Get in touch with our team for inquiries about our AI trading solutions and institutional services.</p>
     <form class="contact-form" onsubmit="event.preventDefault();alert('Thank you for your message! We\'ll get back to you soon.');">
@@ -729,7 +759,7 @@
   </section>
 
   <!-- ===== WHY POST FIAT SECTION ===== -->
-  <section class="why-post-fiat">
+  <section class="why-post-fiat" id="why-agti">
     <div class="section-intro">
       <h2 class="section-title">Why AGTI</h2>
     </div>
@@ -934,7 +964,7 @@
   </section>
 
   <!-- ===== USE CASES SLIDESHOW ===== -->
-  <section class="use-cases-section">
+  <section class="use-cases-section" id="use-cases">
     <div class="use-cases-header">
       <h2>Use Cases</h2>
     </div>
@@ -1404,5 +1434,52 @@
       <p>&copy; 2025 AGTI. All rights reserved. San Juan, Puerto Rico</p>
     </div>
   </footer>
+<script>
+// Mobile menu toggle
+function toggleMobileMenu() {
+  const mobileNav = document.getElementById('mobileNav');
+  const hamburger = document.querySelector('.hamburger');
+  
+  mobileNav.classList.toggle('active');
+  hamburger.classList.toggle('active');
+}
+
+// Smooth scrolling for all navigation links
+document.addEventListener('DOMContentLoaded', function() {
+  // Select both desktop and mobile nav links
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const targetId = this.getAttribute('href').substring(1);
+      const targetSection = document.getElementById(targetId);
+      
+      if (targetSection) {
+        // Calculate offset for sticky header
+        const headerHeight = document.querySelector('header').offsetHeight;
+        const targetPosition = targetSection.offsetTop - headerHeight;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(e) {
+  const mobileNav = document.getElementById('mobileNav');
+  const hamburger = document.querySelector('.hamburger');
+  
+  if (!mobileNav.contains(e.target) && !hamburger.contains(e.target) && mobileNav.classList.contains('active')) {
+    mobileNav.classList.remove('active');
+    hamburger.classList.remove('active');
+  }
+});
+</script>
 </body>
 </html>
